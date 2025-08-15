@@ -1,11 +1,11 @@
 import re
 from typing import List, Tuple
-import fasttext
-from huggingface_hub import hf_hub_download
+# import fasttext
+# from huggingface_hub import hf_hub_download
 import wikipediaapi
 
 # Load the model
-model = fasttext.load_model(hf_hub_download("kenhktsui/llm-data-textbook-quality-fasttext-classifer-v2", "model.bin"))
+# model = fasttext.load_model(hf_hub_download("kenhktsui/llm-data-textbook-quality-fasttext-classifer-v2", "model.bin"))
 
 def clean_markdown_links(text: str, min_quality_score: float = 0.2) -> Tuple[str, float]:
     """
@@ -99,15 +99,17 @@ def predict_educational_value(text_list: List[str]) -> List[float]:
     Predict educational value scores for a list of texts.
     Returns a list of scores between 0 and 2.
     """
-    text_list = [replace_newlines(text) for text in text_list]
-    pred = model.predict(text_list, k=-1)
-    score_list = []
-    for l, s in zip(*pred):
-        score = 0
-        for _l, _s in zip(l, s):
-            score += score_dict[_l] * _s
-        score_list.append(float(score))
-    return score_list
+    # MODEL LOADING DISABLED
+    return [1.0] * len(text_list)
+    # text_list = [replace_newlines(text) for text in text_list]
+    # pred = model.predict(text_list, k=-1)
+    # score_list = []
+    # for l, s in zip(*pred):
+    #     score = 0
+    #     for _l, _s in zip(l, s):
+    #         score += score_dict[_l] * _s
+    #     score_list.append(float(score))
+    # return score_list
 
 def get_wikipedia_content(url: str) -> str | None:
     """

@@ -17,7 +17,7 @@ class SourceProcessor:
         top_results: int = 5,
         strategies: List[str] = ["no_extraction"],
         filter_content: bool = True,
-        reranker: str = "infinity"
+        reranker: str = "none"
     ):
         self.strategies = strategies
         self.filter_content = filter_content
@@ -32,9 +32,12 @@ class SourceProcessor:
         if reranker.lower() == "jina":
             self.semantic_searcher = JinaReranker()
             print("Using Jina Reranker")
-        else:  # default to infinity
+        elif reranker.lower() == "infinity":
             self.semantic_searcher = InfinitySemanticSearcher()
             print("Using Infinity Reranker")
+        else:
+            self.semantic_searcher = None
+            print("No reranker used")
 
     async def process_sources(
         self, 
@@ -76,6 +79,9 @@ class SourceProcessor:
         try:
             # Split the HTML content into chunks
             documents = self.chunker.split_text(html)
+
+            if self.semantic_searcher is None:
+                return "\n\n".join(documents)
             
             # Rerank the chunks based on the query
             reranked_content = self.semantic_searcher.get_reranked_documents(
